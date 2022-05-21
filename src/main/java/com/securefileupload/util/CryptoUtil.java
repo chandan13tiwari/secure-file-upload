@@ -6,18 +6,22 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
+import java.security.*;
+import java.util.Base64;
 
 public class CryptoUtil {
     private static final String ALGORITHM = "AES";
-    private static final String TRANSFORMATION = "AES";
+    private static final String CIPHER = "AES";
+    private static final String TRANSFORMATION = "AES/GCM/NoPadding";
+
+
 
     public static void encrypt(String key, File inputFile, File outputFile)
             throws CryptoException {
@@ -32,7 +36,7 @@ public class CryptoUtil {
     private static void doCrypto(int cipherMode, String key, File inputFile,
                                  File outputFile) throws CryptoException {
         try {
-            Key secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
+            Key secretKey = getSecureRandomKey(CIPHER, 128);
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(cipherMode, secretKey);
 
@@ -54,4 +58,12 @@ public class CryptoUtil {
             throw new CryptoException("Error encrypting/decrypting file", ex);
         }
     }
+
+    private static Key getSecureRandomKey(String cipher, int keySize) {
+        byte[] secureRandomKeyBytes = new byte[keySize / 8];
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(secureRandomKeyBytes);
+        return new SecretKeySpec(secureRandomKeyBytes, cipher);
+    }
+
 }

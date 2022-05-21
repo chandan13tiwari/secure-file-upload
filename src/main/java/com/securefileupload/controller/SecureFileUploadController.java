@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,10 +34,10 @@ public class SecureFileUploadController {
         return "upload";
     }
 
-    @GetMapping("/getTodos")
-    public ResponseEntity<List<FileDetail>> getAllFiles(Model model) {
+    @GetMapping("/getAllFiles")
+    public String getAllFiles(Model model) {
         model.addAttribute("files", service.getAllTodos());
-        return new ResponseEntity<>(service.getAllTodos(), HttpStatus.OK);
+        return "files";
     }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -44,8 +45,9 @@ public class SecureFileUploadController {
 
         //Start encrypting File
         File file = convertMultiPartToFile(multipartFile);
-        File encryptedFile = new File(Constants.FILE_PATH + multipartFile.getOriginalFilename() + ".encrypted");
-        File decryptedFile = new File(Constants.FILE_PATH + multipartFile.getOriginalFilename() + ".decrypted");
+        String fileName = file.getName();
+        File encryptedFile = new File(fileName.substring(0, fileName.lastIndexOf('.')));
+        //File decryptedFile = new File(Constants.FILE_PATH + multipartFile.getName() + ".decrypted");
 
         String message = "";
 

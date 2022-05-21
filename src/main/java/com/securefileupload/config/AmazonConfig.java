@@ -15,7 +15,7 @@ public class AmazonConfig {
     @Value("${amazon.access.key}")
     private String accessKey;
 
-    @Value("${amazon.secure.key}")
+    @Value("${amazon.secret.key}")
     private String secretKey;
 
     @Value("${amazon.user.region}")

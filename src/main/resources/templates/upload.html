@@ -28,37 +28,6 @@
             </p>
         </form>
     </div>
-
-    <div><h2>List of Files from S3</h2></div>
-    <div>
-        <table>
-            <thead>
-                <tr>
-                    <td>Id</td>
-                    <td>File Name</td>
-                    <td>Title</td>
-                    <td>Description</td>
-                    <td>Action</td>
-                </tr>
-            </thead>
-            <tbody>
-            <tr th:if="${files.empty}">
-                <td colspan="2"> No Files Available on Amazon S3 </td>
-            </tr>
-            <tr th:each="file : ${files}">
-                <td><span th:text="${file.id}"></span></td>
-                <td><span th:text="${file.fileName}"></span></td>
-                <td><span th:text="${file.title}"></span></td>
-                <td><span th:text="${file.description}"></span></td>
-                <td>
-                    <form method="GET" th:action="@{/api/v1/secure/__${file.id}__/image/download}">
-                        <button type="submit" name="submit">DOWNLOAD</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
 </div>
 </body>
 </html>
