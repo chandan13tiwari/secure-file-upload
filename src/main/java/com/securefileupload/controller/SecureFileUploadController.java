@@ -34,12 +34,13 @@ public class SecureFileUploadController {
     }
 
     @GetMapping("/getTodos")
-    public ResponseEntity<List<FileDetail>> getTodos() {
+    public ResponseEntity<List<FileDetail>> getAllFiles(Model model) {
+        model.addAttribute("files", service.getAllTodos());
         return new ResponseEntity<>(service.getAllTodos(), HttpStatus.OK);
     }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FileDetail> saveTodo(Model model, @RequestParam("title") String title, @RequestParam("description") String description, @RequestParam("file") MultipartFile multipartFile) throws IOException {
+    public ResponseEntity<FileDetail> uploadFileToS3(Model model, @RequestParam("title") String title, @RequestParam("description") String description, @RequestParam("file") MultipartFile multipartFile) throws IOException {
 
         //Start encrypting File
         File file = convertMultiPartToFile(multipartFile);
@@ -67,7 +68,7 @@ public class SecureFileUploadController {
     }
 
     @GetMapping(value = "{id}/image/download")
-    public byte[] downloadTodoImage(@PathVariable("id") UUID id) {
+    public byte[] downloadFileFromS3(@PathVariable("id") UUID id) {
         return service.downloadTodoImage(id);
     }
 

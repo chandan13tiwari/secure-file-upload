@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="ISO-8859-1">
     <title>Spring Boot File Upload to S3</title>
 </head>
 <body>
-<div align="center">
-    <div><h2>Spring Boot File Upload to S3</h2></div>
+<div align="left">
+    <div><h2>File Upload to S3</h2></div>
     <div>
         <form action="upload" method="post" enctype="multipart/form-data">
             <p>
@@ -29,22 +29,35 @@
         </form>
     </div>
 
-    <div><h2>Spring Boot File Download from S3</h2></div>
+    <div><h2>List of Files from S3</h2></div>
     <div>
-        <form action="upload" method="post" enctype="multipart/form-data">
-            <p>
-                Description:
-                <input type="text" name="description" size="30" required />
-            </p>
-
-            <p>
-                <input type="file" name="file" required />
-            </p>
-
-            <p>
-                <button type="submit">Submit</button>
-            </p>
-        </form>
+        <table>
+            <thead>
+                <tr>
+                    <td>Id</td>
+                    <td>File Name</td>
+                    <td>Title</td>
+                    <td>Description</td>
+                    <td>Action</td>
+                </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${files.empty}">
+                <td colspan="2"> No Files Available on Amazon S3 </td>
+            </tr>
+            <tr th:each="file : ${files}">
+                <td><span th:text="${file.id}"></span></td>
+                <td><span th:text="${file.fileName}"></span></td>
+                <td><span th:text="${file.title}"></span></td>
+                <td><span th:text="${file.description}"></span></td>
+                <td>
+                    <form method="GET" th:action="@{/api/v1/secure/__${file.id}__/image/download}">
+                        <button type="submit" name="submit">DOWNLOAD</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>
