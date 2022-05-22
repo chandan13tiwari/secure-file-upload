@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Base64;
+
 @Configuration
 public class AmazonConfig {
 
@@ -24,7 +26,7 @@ public class AmazonConfig {
     @Bean
     public AmazonS3 s3() {
         AWSCredentials awsCredentials =
-                new BasicAWSCredentials(accessKey, secretKey);
+                new BasicAWSCredentials(new String(Base64.getDecoder().decode(accessKey)), new String(Base64.getDecoder().decode(secretKey)));
         return AmazonS3ClientBuilder
                 .standard()
                 .withRegion(region)

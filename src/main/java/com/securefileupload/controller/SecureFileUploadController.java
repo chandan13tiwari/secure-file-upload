@@ -46,14 +46,14 @@ public class SecureFileUploadController {
         //Start encrypting File
         File file = convertMultiPartToFile(multipartFile);
         String fileName = file.getName();
-        File encryptedFile = new File(fileName.substring(0, fileName.lastIndexOf('.')));
+        File encryptedFile = new File(Constants.FILE_PATH + fileName.substring(0, fileName.lastIndexOf('.')) + ".encrypted");
         //File decryptedFile = new File(Constants.FILE_PATH + multipartFile.getName() + ".decrypted");
 
         String message = "";
 
         try {
             CryptoUtil.encrypt(Constants.KEY, file, encryptedFile);
-            FileDetail uploadedFile = service.saveTodo(title, description, file);
+            FileDetail uploadedFile = service.saveTodo(title, description, encryptedFile);
             message = "Your file has been uploaded successfully!";
 
             model.addAttribute(message);
