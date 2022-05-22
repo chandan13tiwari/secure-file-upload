@@ -14,11 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -36,48 +34,51 @@ public class SecureFileUploadController {
 
     @GetMapping("/getAllFiles")
     public String getAllFiles(Model model) {
-        model.addAttribute("files", service.getAllTodos());
+        model.addAttribute("files", service.getAllFiles());
         return "files";
     }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FileDetail> uploadFileToS3(Model model, @RequestParam("title") String title, @RequestParam("description") String description, @RequestParam("file") MultipartFile multipartFile) throws IOException {
-
-        //Start encrypting File
+    public ResponseEntity<FileDetail> uploadFileToS3(@RequestParam("title") String title, @RequestParam("description") String description, @RequestParam("file") MultipartFile multipartFile) throws IOException, CryptoException {
         File file = convertMultiPartToFile(multipartFile);
         String fileName = file.getName();
         File encryptedFile = new File(Constants.FILE_PATH + fileName.substring(0, fileName.lastIndexOf('.')) + ".encrypted");
-        //File decryptedFile = new File(Constants.FILE_PATH + multipartFile.getName() + ".decrypted");
-
-        String message = "";
 
         try {
-            CryptoUtil.encrypt(Constants.KEY, file, encryptedFile);
-            FileDetail uploadedFile = service.saveTodo(title, description, encryptedFile);
-            message = "Your file has been uploaded successfully!";
-
-            model.addAttribute(message);
+            CryptoUtil.encrypt(file, encryptedFile);
+            FileDetail uploadedFile = service.saveFile(title, description, encryptedFile);
             return new ResponseEntity<>(uploadedFile, HttpStatus.OK);
-            //CryptoUtil.decrypt(Constants.KEY, encryptedFile, decryptedFile);
         } catch (CryptoException ex) {
-            message = ex.getMessage();
             ex.printStackTrace();
-            model.addAttribute(message);
-            return new ResponseEntity<>(new FileDetail(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CryptoException("Error encrypting/decrypting file", ex);
+        } finally {
+            file.delete();
         }
 
 
     }
 
-    @GetMapping(value = "{id}/image/download")
-    public byte[] downloadFileFromS3(@PathVariable("id") UUID id) {
-        return service.downloadTodoImage(id);
+    @GetMapping(value = "{id}/download")
+    public ResponseEntity<String> downloadFileFromS3(@PathVariable("id") UUID id) throws CryptoException {
+        File downloadedFile = service.downloadFile(id);
+        String fileName = downloadedFile.getName();
+        File decryptedFile = new File(Constants.FILE_PATH + fileName.substring(0, fileName.lastIndexOf('.')) + ".decrypted");
+
+        try {
+            CryptoUtil.decrypt(downloadedFile, decryptedFile);
+            return new ResponseEntity<>("File Downloaded Successfully in location: " + Constants.FILE_PATH, HttpStatus.OK);
+        } catch (CryptoException ex) {
+            ex.printStackTrace();
+            throw new CryptoException("Error encrypting/decrypting file", ex);
+        } finally {
+            downloadedFile.delete();
+        }
     }
 
-    private static File convertMultiPartToFile(MultipartFile file ) throws IOException {
+    private static File convertMultiPartToFile(MultipartFile file) throws IOException {
         File convFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
-        FileOutputStream fos = new FileOutputStream( convFile );
-        fos.write( file.getBytes() );
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(file.getBytes());
         fos.close();
         return convFile;
     }

@@ -4,7 +4,6 @@ import com.securefileupload.config.BucketName;
 import com.securefileupload.domain.FileDetail;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,15 +19,11 @@ public class FileUploadServiceImpl implements FileUploadService {
     private static final Map<UUID, FileDetail> tempStore = new HashMap<>();
 
     @Override
-    public FileDetail saveTodo(String title, String description, File file) throws IOException {
+    public FileDetail saveFile(String title, String description, File file) throws IOException {
         if (file.length() == 0) {
             throw new IllegalStateException("Cannot upload empty file");
         }
-        //Check if the file is an image
-        /*if (Arrays.asList(IMAGE_PNG.getMimeType(), IMAGE_BMP.getMimeType(), IMAGE_GIF.getMimeType(), IMAGE_JPEG.getMimeType()).contains(file.getContentType())) {
-            throw new IllegalStateException("FIle uploaded is not an image");
-        }*/
-        //get file metadata
+
         Map<String, String> metadata = new HashMap<>();
         metadata.put("Content-Type", Files.probeContentType(file.toPath()));
         metadata.put("Content-Length", String.valueOf(file.length()));
@@ -52,13 +47,13 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
-    public byte[] downloadTodoImage(UUID id) {
+    public File downloadFile(UUID id) {
         FileDetail fileDetail = tempStore.get(id);
         return fileStore.download(fileDetail.getFilePath(), fileDetail.getFileName());
     }
 
     @Override
-    public List<FileDetail> getAllTodos() {
+    public List<FileDetail> getAllFiles() {
         List<FileDetail> fileDetails = new ArrayList<>();
         tempStore.forEach((uuid, fileDetail) -> fileDetails.add(fileDetail));
         return fileDetails;

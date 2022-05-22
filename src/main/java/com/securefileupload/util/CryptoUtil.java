@@ -6,38 +6,38 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.*;
-import java.util.Base64;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class CryptoUtil {
+
+    private static final String TRANSFORMATION = "AES";
     private static final String ALGORITHM = "AES";
-    private static final String CIPHER = "AES";
-    private static final String TRANSFORMATION = "AES/GCM/NoPadding";
+    private static final String MESSAGE_DIGEST = "MD5";
 
-
-
-    public static void encrypt(String key, File inputFile, File outputFile)
-            throws CryptoException {
-        doCrypto(Cipher.ENCRYPT_MODE, key, inputFile, outputFile);
+    public static void encrypt(File inputFile, File outputFile) throws CryptoException {
+        doCrypto(Cipher.ENCRYPT_MODE, inputFile, outputFile);
     }
 
-    public static void decrypt(String key, File inputFile, File outputFile)
-            throws CryptoException {
-        doCrypto(Cipher.DECRYPT_MODE, key, inputFile, outputFile);
+    public static void decrypt(File inputFile, File outputFile) throws CryptoException {
+        doCrypto(Cipher.DECRYPT_MODE, inputFile, outputFile);
     }
 
-    private static void doCrypto(int cipherMode, String key, File inputFile,
-                                 File outputFile) throws CryptoException {
+    private static void doCrypto(int cipherMode, File inputFile, File outputFile) throws CryptoException {
         try {
-            Key secretKey = getSecureRandomKey(CIPHER, 128);
+            MessageDigest messageDigest = MessageDigest.getInstance(MESSAGE_DIGEST);
+            Key secretKey = new SecretKeySpec(messageDigest.digest(Constants.KEY.getBytes(UTF_8)), ALGORITHM);
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+
             cipher.init(cipherMode, secretKey);
 
             FileInputStream inputStream = new FileInputStream(inputFile);
@@ -58,12 +58,4 @@ public class CryptoUtil {
             throw new CryptoException("Error encrypting/decrypting file", ex);
         }
     }
-
-    private static Key getSecureRandomKey(String cipher, int keySize) {
-        byte[] secureRandomKeyBytes = new byte[keySize / 8];
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.nextBytes(secureRandomKeyBytes);
-        return new SecretKeySpec(secureRandomKeyBytes, cipher);
-    }
-
 }

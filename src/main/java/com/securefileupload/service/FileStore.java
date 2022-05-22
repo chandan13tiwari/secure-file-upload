@@ -5,10 +5,12 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.util.IOUtils;
+import com.securefileupload.util.Constants;
 import lombok.AllArgsConstructor;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -33,13 +35,17 @@ public class FileStore {
         }
     }
 
-    public byte[] download(String path, String key) {
+    public File download(String path, String key) {
         try {
             S3Object object = amazonS3.getObject(path, key);
-            S3ObjectInputStream objectContent = object.getObjectContent();
-            return IOUtils.toByteArray(objectContent);
-        } catch (AmazonServiceException | IOException e) {
+            S3ObjectInputStream inputStream = object.getObjectContent();
+            File downloadedFile = new File(Constants.FILE_PATH + key);
+            FileUtils.copyInputStreamToFile(inputStream, downloadedFile);
+            return downloadedFile;
+        } catch (AmazonServiceException e) {
             throw new IllegalStateException("Failed to download the file", e);
+        } catch (IOException e) {
+            throw new IllegalStateException("Error in file conversion", e);
         }
     }
 

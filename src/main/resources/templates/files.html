@@ -25,7 +25,7 @@
                 <td><span th:text="${file.title}"></span></td>
                 <td><span th:text="${file.description}"></span></td>
                 <td>
-                    <form method="GET" th:action="@{/api/v1/secure/__${file.id}__/image/download}">
+                    <form method="GET" th:action="@{/api/v1/secure/__${file.id}__/download}">
                         <button type="submit" name="submit">DOWNLOAD</button>
                     </form>
                 </td>
