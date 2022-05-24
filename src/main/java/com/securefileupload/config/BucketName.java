@@ -6,6 +6,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum BucketName {
-    FILE_BUCKET("spring-secure-file-upload");
+    S3_BUCKET("spring-secure-file-upload");
     private final String bucketName;
 }

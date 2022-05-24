@@ -28,7 +28,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         metadata.put("Content-Type", Files.probeContentType(file.toPath()));
         metadata.put("Content-Length", String.valueOf(file.length()));
 
-        String path = String.format("%s/%s", BucketName.FILE_BUCKET.getBucketName(), UUID.randomUUID());
+        String path = String.format("%s/%s", BucketName.S3_BUCKET.getBucketName(), UUID.randomUUID());
         String fileName = String.format("%s", file.getName());
         try {
             fileStore.upload(path, fileName, Optional.of(metadata), new FileInputStream(file));
