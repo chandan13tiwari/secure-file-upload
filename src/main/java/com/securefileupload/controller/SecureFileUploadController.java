@@ -2,6 +2,7 @@ package com.securefileupload.controller;
 
 import com.securefileupload.domain.FileDetail;
 import com.securefileupload.exception.CryptoException;
+import com.securefileupload.exception.SecureFileNotFoundException;
 import com.securefileupload.security.AESAlgorithm;
 import com.securefileupload.security.KeyGenerator;
 import com.securefileupload.service.FileUploadService;
@@ -74,7 +75,7 @@ public class SecureFileUploadController {
     }
 
     @GetMapping(value = "{id}/download")
-    public ResponseEntity<String> downloadFileFromS3(@PathVariable("id") UUID id) throws CryptoException {
+    public ResponseEntity<String> downloadFileFromS3(@PathVariable("id") UUID id) throws CryptoException, SecureFileNotFoundException {
         File downloadedFile = service.downloadFile(id);
         String fileName = downloadedFile.getName();
         File decryptedFile = new File(Constants.FILE_PATH + fileName.substring(0, fileName.lastIndexOf('.')) + ".decrypted");
@@ -90,6 +91,7 @@ public class SecureFileUploadController {
             throw new CryptoException("Error encrypting/decrypting file", ex);
         } finally {
             downloadedFile.delete();
+            decryptedFile.deleteOnExit(); //remove this line if you want to permanently store downloaded files
         }
     }
 

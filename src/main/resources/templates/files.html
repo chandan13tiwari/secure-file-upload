@@ -20,12 +20,12 @@
             </thead>
             <tbody>
             <tr th:each="file : ${files}">
-                <td><span th:text="${file.id}"></span></td>
-                <td><span th:text="${file.fileName}"></span></td>
-                <td><span th:text="${file.title}"></span></td>
-                <td><span th:text="${file.description}"></span></td>
+                <td><span th:text="${file.secureFileId}"></span></td>
+                <td><span th:text="${file.secureFileName}"></span></td>
+                <td><span th:text="${file.secureFileTitle}"></span></td>
+                <td><span th:text="${file.secureFileDescription}"></span></td>
                 <td>
-                    <form method="GET" th:action="@{/api/v1/secure/__${file.id}__/download}">
+                    <form method="GET" th:action="@{/api/v1/secure/__${file.secureFileId}__/download}">
                         <button type="submit" name="submit">DOWNLOAD</button>
                     </form>
                 </td>

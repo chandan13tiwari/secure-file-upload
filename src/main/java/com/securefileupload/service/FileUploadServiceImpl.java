@@ -2,6 +2,9 @@ package com.securefileupload.service;
 
 import com.securefileupload.config.BucketName;
 import com.securefileupload.domain.FileDetail;
+import com.securefileupload.entity.SecureFileUploadEntity;
+import com.securefileupload.exception.SecureFileNotFoundException;
+import com.securefileupload.repository.SecureFileUploadRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +17,9 @@ import java.util.*;
 @Service
 @AllArgsConstructor
 public class FileUploadServiceImpl implements FileUploadService {
-    private final FileStore fileStore;
 
-    private static final Map<UUID, FileDetail> tempStore = new HashMap<>();
+    private SecureFileUploadRepository secureFileUploadRepository;
+    private final FileStore fileStore;
 
     @Override
     public FileDetail saveFile(String title, String description, File file) throws IOException {
@@ -42,20 +45,23 @@ public class FileUploadServiceImpl implements FileUploadService {
                 .filePath(path)
                 .fileName(fileName)
                 .build();
-        tempStore.put(fileDetail.getId(), fileDetail);
-        return tempStore.get(fileDetail.getId());
+
+        secureFileUploadRepository.save(SecureFileUploadEntity.fromFileDetails(fileDetail));
+        return fileDetail;
     }
 
     @Override
-    public File downloadFile(UUID id) {
-        FileDetail fileDetail = tempStore.get(id);
-        return fileStore.download(fileDetail.getFilePath(), fileDetail.getFileName());
+    public File downloadFile(UUID id) throws SecureFileNotFoundException {
+        Optional<SecureFileUploadEntity> secureFileUpload = secureFileUploadRepository.findById(id);
+        if (secureFileUpload.isPresent()) {
+            return fileStore.download(secureFileUpload.get().getSecureFileS3Path(), secureFileUpload.get().getSecureFileName());
+        } else {
+            throw new SecureFileNotFoundException("File not present in DB");
+        }
     }
 
     @Override
-    public List<FileDetail> getAllFiles() {
-        List<FileDetail> fileDetails = new ArrayList<>();
-        tempStore.forEach((uuid, fileDetail) -> fileDetails.add(fileDetail));
-        return fileDetails;
+    public List<SecureFileUploadEntity> getAllFiles() {
+        return (List<SecureFileUploadEntity>) secureFileUploadRepository.findAll();
     }
 }
