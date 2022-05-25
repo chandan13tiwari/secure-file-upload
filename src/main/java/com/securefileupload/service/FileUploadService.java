@@ -15,4 +15,6 @@ public interface FileUploadService {
     File downloadFile(UUID id) throws SecureFileNotFoundException;
 
     List<SecureFileUploadEntity> getAllFiles();
+
+    SecureFileUploadEntity deleteFile(UUID id) throws SecureFileNotFoundException;
 }

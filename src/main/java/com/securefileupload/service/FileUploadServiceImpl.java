@@ -64,4 +64,16 @@ public class FileUploadServiceImpl implements FileUploadService {
     public List<SecureFileUploadEntity> getAllFiles() {
         return (List<SecureFileUploadEntity>) secureFileUploadRepository.findAll();
     }
+
+    @Override
+    public SecureFileUploadEntity deleteFile(UUID id) throws SecureFileNotFoundException {
+        Optional<SecureFileUploadEntity> secureFileUpload = secureFileUploadRepository.findById(id);
+        if (secureFileUpload.isPresent()) {
+            fileStore.delete(BucketName.S3_BUCKET.getBucketName(), secureFileUpload.get().getSecureFileS3Path(), secureFileUpload.get().getSecureFileName());
+            secureFileUploadRepository.delete(secureFileUpload.get());
+            return secureFileUpload.get();
+        } else {
+            throw new SecureFileNotFoundException("File not present in DB");
+        }
+    }
 }

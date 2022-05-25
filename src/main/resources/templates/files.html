@@ -29,6 +29,11 @@
                         <button type="submit" name="submit">DOWNLOAD</button>
                     </form>
                 </td>
+                <td>
+                    <form method="GET" th:action="@{/api/v1/secure/__${file.secureFileId}__/delete}">
+                        <button type="submit" name="submit">DELETE</button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>

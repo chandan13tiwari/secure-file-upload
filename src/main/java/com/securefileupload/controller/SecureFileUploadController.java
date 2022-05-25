@@ -1,6 +1,7 @@
 package com.securefileupload.controller;
 
 import com.securefileupload.domain.FileDetail;
+import com.securefileupload.entity.SecureFileUploadEntity;
 import com.securefileupload.exception.CryptoException;
 import com.securefileupload.exception.SecureFileNotFoundException;
 import com.securefileupload.security.AESAlgorithm;
@@ -93,6 +94,14 @@ public class SecureFileUploadController {
             downloadedFile.delete();
             decryptedFile.deleteOnExit(); //remove this line if you want to permanently store downloaded files
         }
+    }
+
+    @GetMapping(value = "{id}/delete")
+    public ResponseEntity<String> deleteFileFromS3(@PathVariable("id") UUID id) throws SecureFileNotFoundException {
+        SecureFileUploadEntity deletedFile = service.deleteFile(id);
+        String fileName = deletedFile.getSecureFileName();
+        String path = deletedFile.getSecureFileS3Path();
+        return new ResponseEntity<>(path + "/" + fileName + " has been deleted sucessfully", HttpStatus.OK);
     }
 
     private static File convertMultiPartToFile(MultipartFile file) throws IOException {
