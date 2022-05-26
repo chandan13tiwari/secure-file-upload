@@ -1,6 +1,8 @@
 package com.securefileupload.security;
 
 import com.securefileupload.util.Constants;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,6 +11,7 @@ import java.security.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+@Configuration
 public class KeyGenerator {
 
     private static final String RSA = "RSA";
@@ -26,12 +29,14 @@ public class KeyGenerator {
     private PublicKey publicKey;
     private byte[] aesKey;
 
+    @Bean
     public void generateRandomKeyAES() throws IOException, NoSuchAlgorithmException {
         MessageDigest messageDigest = MessageDigest.getInstance(MESSAGE_DIGEST);
         this.aesKey = messageDigest.digest(Constants.KEY.getBytes(UTF_8));
         writeToFile(Constants.KEY_PATH + AES_KEY_FILE, this.aesKey);
     }
 
+    @Bean
     public void generateKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, IOException {
         this.keyGen = KeyPairGenerator.getInstance(RSA);
         this.keyGen.initialize(KEY_LENGTH);
@@ -69,12 +74,14 @@ public class KeyGenerator {
         fos.close();
     }
 
+    @Bean
     public void encryptAESKey() throws IOException, GeneralSecurityException {
         RSAAlgorithm rsa = new RSAAlgorithm();
         rsa.encryptAESKey(this.aesKey, new File(Constants.KEY_PATH + AES_ENCRYPTED_FILE), this.privateKey);
 
     }
 
+    @Bean
     public void decryptAESKey() throws IOException, GeneralSecurityException {
         RSAAlgorithm rsa = new RSAAlgorithm();
         rsa.decryptAESKey(rsa.fileToBytes(new File(Constants.KEY_PATH + AES_ENCRYPTED_FILE)),

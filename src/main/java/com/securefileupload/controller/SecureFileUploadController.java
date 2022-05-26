@@ -31,11 +31,12 @@ public class SecureFileUploadController {
 
     private final FileUploadService service;
 
-    private KeyGenerator keyGenerator = new KeyGenerator();
+    private KeyGenerator keyGenerator;
 
     @Autowired
-    public SecureFileUploadController(FileUploadService service) {
+    public SecureFileUploadController(FileUploadService service, KeyGenerator keyGenerator) {
         this.service = service;
+        this.keyGenerator = keyGenerator;
     }
 
     @GetMapping("/")
@@ -54,7 +55,7 @@ public class SecureFileUploadController {
         File file = convertMultiPartToFile(multipartFile);
         String fileName = file.getName();
 
-        keyGenerator = new KeyGenerator();
+        //keyGenerator = new KeyGenerator();
         keyGenerator.generateRandomKeyAES();
         keyGenerator.generateKeyPair();
         keyGenerator.encryptAESKey();
@@ -70,6 +71,7 @@ public class SecureFileUploadController {
             throw new CryptoException("Error encrypting/decrypting file", ex);
         } finally {
             file.delete();
+            encryptedFile.deleteOnExit();
         }
 
 
