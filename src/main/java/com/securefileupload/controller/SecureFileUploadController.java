@@ -31,7 +31,7 @@ public class SecureFileUploadController {
 
     private final FileUploadService service;
 
-    private KeyGenerator keyGenerator;
+    private final KeyGenerator keyGenerator;
 
     @Autowired
     public SecureFileUploadController(FileUploadService service, KeyGenerator keyGenerator) {
@@ -55,7 +55,6 @@ public class SecureFileUploadController {
         File file = convertMultiPartToFile(multipartFile);
         String fileName = file.getName();
 
-        //keyGenerator = new KeyGenerator();
         keyGenerator.generateRandomKeyAES();
         keyGenerator.generateKeyPair();
         keyGenerator.encryptAESKey();
