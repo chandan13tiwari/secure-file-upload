@@ -20,5 +20,6 @@ downloading. We are downloaded the encrypted file and then decrypted it using th
 * Add your AWS Access key,Secret key and aws region in application.properties file
 * Create a folder called "file" under /resources folder to store the downloaded files
 * Update your unique secret key which used in encryption/decryption in "Constants.class"
+* Update the bucket name under config package
 
 
