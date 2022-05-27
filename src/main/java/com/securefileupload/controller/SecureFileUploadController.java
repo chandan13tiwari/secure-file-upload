@@ -39,7 +39,7 @@ public class SecureFileUploadController {
         this.keyGenerator = keyGenerator;
     }
 
-    @GetMapping("/")
+    @GetMapping("/home")
     public String homePage() {
         return "upload";
     }
