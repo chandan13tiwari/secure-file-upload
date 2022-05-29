@@ -25,12 +25,12 @@
                 <td><span th:text="${file.secureFileTitle}"></span></td>
                 <td><span th:text="${file.secureFileDescription}"></span></td>
                 <td>
-                    <form method="GET" th:action="@{/api/v1/secure/__${file.secureFileId}__/download}">
+                    <form method="GET" th:action="@{/api/v1/secure/user/__${file.secureFileId}__/download}">
                         <button type="submit" name="submit">DOWNLOAD</button>
                     </form>
                 </td>
                 <td>
-                    <form method="GET" th:action="@{/api/v1/secure/__${file.secureFileId}__/delete}">
+                    <form method="GET" th:action="@{/api/v1/secure/user/__${file.secureFileId}__/delete}">
                         <button type="submit" name="submit">DELETE</button>
                     </form>
                 </td>

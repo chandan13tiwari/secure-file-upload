@@ -90,13 +90,28 @@ body {
   overflow: hidden;
 }
 .box-form .right input {
-  width: 100%;
+  height: 100%;
   padding: 10px;
   margin-top: 25px;
   font-size: 16px;
   border: none;
   outline: none;
   border-bottom: 2px solid #B0B3B9;
+}
+.box-form .right table {
+  width: 100%;
+}
+.box-form .right td {
+  width: 50%;
+}
+.box-form .right input#user {
+  width: 10%;
+}
+.box-form .right input#admin {
+  width: 10%;
+}
+.box-form .right label {
+  width: 50%;
 }
 .box-form .right .remember-me--forget-password {
   display: flex;
@@ -108,8 +123,8 @@ body {
   margin-right: 7px;
   width: auto;
 }
-.box-form .right button {
-  float: right;
+.box-form .right button#upload_file {
+  float: center;
   color: #fff;
   font-size: 16px;
   padding: 12px 35px;
@@ -120,45 +135,15 @@ body {
   box-shadow: 0px 4px 20px 0px #49c628a6;
   background-image: linear-gradient(135deg, #70F570 10%, #49C628 100%);
 }
-
-label {
-  display: block;
-  position: relative;
-  margin-left: 30px;
-}
-
-label::before {
-  content: ' \f00c';
-  position: absolute;
-  font-family: FontAwesome;
-  background: transparent;
-  border: 3px solid #70F570;
-  border-radius: 4px;
-  color: transparent;
-  left: -30px;
-  transition: all 0.2s linear;
-}
-
-label:hover::before {
-  font-family: FontAwesome;
-  content: ' \f00c';
+.box-form .right button#file_action {
+  float: center;
   color: #fff;
-  cursor: pointer;
-  background: #70F570;
-}
-
-label:hover::before .text-checkbox {
-  background: #70F570;
-}
-
-label span.text-checkbox {
+  font-size: 16px;
+  padding: 12px 35px;
+  border-radius: 50px;
   display: inline-block;
-  height: auto;
-  position: relative;
-  cursor: pointer;
-  transition: all 0.2s linear;
-}
-
-label input[type="checkbox"] {
-  display: none;
+  border: 0;
+  outline: 0;
+  box-shadow: 0px 4px 20px 0px #49c628a6;
+  background-image: linear-gradient(135deg, #70F570 10%, #49C628 100%);
 }

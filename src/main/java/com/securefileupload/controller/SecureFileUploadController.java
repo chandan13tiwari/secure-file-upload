@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("api/v1/secure")
+@RequestMapping("/api/v1/secure/user")
 @CrossOrigin("*")
 public class SecureFileUploadController {
 
@@ -37,6 +37,12 @@ public class SecureFileUploadController {
     public SecureFileUploadController(FileUploadService service, KeyGenerator keyGenerator) {
         this.service = service;
         this.keyGenerator = keyGenerator;
+    }
+
+    @PostMapping("/dashboard")
+    public String dashboardPage(Model model, @RequestParam("username") String user) {
+        model.addAttribute("username", user);
+        return "dashboard";
     }
 
     @GetMapping("/home")

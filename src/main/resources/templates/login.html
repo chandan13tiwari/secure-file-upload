@@ -5,11 +5,10 @@
     <title>Login Page in HTML with CSS Code Example</title>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <link rel="stylesheet" th:href="@{/styles/css/user_login.css}">
+    <link rel="stylesheet" th:href="@{/styles/css/login.css}">
 
 </head>
 <body>
-<!-- partial:index.partial.html -->
 <div class="box-form">
     <div class="left">
         <div class="overlay">
@@ -17,27 +16,27 @@
             <br>
             <br>
             <p>Hey there! You can now upload and download secure files to Amazon AWS S3 using Secure File Upload.</p>
-            </span>
         </div>
     </div>
 
 
     <div class="right">
-        <h5>User</h5>
         <h5>Login</h5>
-        <p>Don't have an account? <a href="#">Creat Your Account</a> it takes less than a minute</p>
-        <div class="inputs">
-            <input type="text" placeholder="Username">
-            <br>
-            <input type="password" placeholder="Password">
-        </div>
+        <p>Want to add an account? <a th:href="@{/api/v1/secure/dashboard/signup}">Create user/admin Account</a> it takes less than a minute</p>
+        <form th:action="@{/api/v1/secure/user/dashboard}" method="post">
+            <div class="inputs">
+                <input type="text" placeholder="Username" name="username">
+                <br>
+                <input type="password" placeholder="Password" name="password">
+            </div>
 
-        <br><br>
-        <button>Login</button>
+            <br><br>
+
+            <button type="submit">Login</button>
+        </form>
     </div>
 
 </div>
-<!-- partial -->
 
 </body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="ISO-8859-1">
     <title>Spring Boot File Upload to S3</title>
@@ -8,7 +8,7 @@
 <div align="left">
     <div><h2>File Upload to S3</h2></div>
     <div>
-        <form action="upload" method="post" enctype="multipart/form-data">
+        <form action="/api/v1/secure/user/upload" method="post" enctype="multipart/form-data">
             <p>
                 Title:
                 <input type="text" name="title" size="30" required/>
