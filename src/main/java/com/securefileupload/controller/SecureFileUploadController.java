@@ -40,8 +40,8 @@ public class SecureFileUploadController {
     }
 
     @PostMapping("/dashboard")
-    public String dashboardPage(Model model, @RequestParam("username") String user) {
-        model.addAttribute("username", user);
+    public String dashboardPage() {
+        //model.addAttribute("username", username);
         return "dashboard";
     }
 
@@ -108,7 +108,7 @@ public class SecureFileUploadController {
         SecureFileUploadEntity deletedFile = service.deleteFile(id);
         String fileName = deletedFile.getSecureFileName();
         String path = deletedFile.getSecureFileS3Path();
-        return new ResponseEntity<>(path + "/" + fileName + " has been deleted sucessfully", HttpStatus.OK);
+        return new ResponseEntity<>(path + "/" + fileName + " has been deleted successfully", HttpStatus.OK);
     }
 
     private static File convertMultiPartToFile(MultipartFile file) throws IOException {

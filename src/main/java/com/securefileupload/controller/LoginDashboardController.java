@@ -50,6 +50,11 @@ public class LoginDashboardController {
                 .accountType(role)
                 .build();
         accountDetailsService.createAccount(accountDetails);
-        return "create_account";
+        return "create_success";
+    }
+
+    @GetMapping("/login")
+    public String login(Model model){
+        return "login";
     }
 }

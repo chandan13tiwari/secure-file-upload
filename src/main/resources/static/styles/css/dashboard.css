@@ -79,24 +79,28 @@ body {
   }
 }
 .box-form .right h5 {
-  font-size: 6vmax;
+  font-size: 5vmax;
   line-height: 0;
 }
 .box-form .right p {
   font-size: 14px;
   color: #B0B3B9;
 }
-.box-form .right .inputs {
-  overflow: hidden;
+
+.box-form .right form#create_form {
+  height: 50%;
+  align: top;
+  text-align: center;
 }
-.box-form .right input {
-  height: 100%;
-  padding: 10px;
-  margin-top: 25px;
-  font-size: 16px;
-  border: none;
-  outline: none;
-  border-bottom: 2px solid #B0B3B9;
+
+.box-form .right form#login_form {
+  height: 50%;
+  align: bottom;
+  text-align: center;
+}
+
+.box-form .right .inputs {
+  margin-top: 100%;
 }
 .box-form .right table {
   width: 100%;

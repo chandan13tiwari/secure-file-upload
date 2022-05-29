@@ -79,16 +79,14 @@ body {
   }
 }
 .box-form .right h5 {
-  font-size: 6vmax;
+  font-size: 5vmax;
   line-height: 0;
 }
 .box-form .right p {
   font-size: 14px;
   color: #B0B3B9;
 }
-.box-form .right .inputs {
-  overflow: hidden;
-}
+
 .box-form .right input {
   width: 100%;
   padding: 10px;
@@ -109,7 +107,7 @@ body {
   width: auto;
 }
 .box-form .right button {
-  float: right;
+  float: left;
   color: #fff;
   font-size: 16px;
   padding: 12px 35px;

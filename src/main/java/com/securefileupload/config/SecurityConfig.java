@@ -64,6 +64,9 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
+                .loginPage("/api/v1/secure/dashboard/login")
+                //.loginProcessingUrl("/api/v1/secure/user/dashboard")
+                .defaultSuccessUrl("/api/v1/secure/user/dashboard")
                 .and().csrf().disable()
                 .authenticationProvider(this.userDetailsService());
 
