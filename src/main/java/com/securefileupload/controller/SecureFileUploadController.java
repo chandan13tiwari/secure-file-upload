@@ -1,11 +1,14 @@
 package com.securefileupload.controller;
 
 import com.securefileupload.domain.FileDetail;
+import com.securefileupload.entity.SecureFileUploadEntity;
 import com.securefileupload.exception.CryptoException;
+import com.securefileupload.exception.SecureFileNotFoundException;
+import com.securefileupload.security.AESAlgorithm;
+import com.securefileupload.security.KeyGenerator;
 import com.securefileupload.service.FileUploadService;
 import com.securefileupload.util.Constants;
-import com.securefileupload.util.CryptoUtil;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +20,23 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Objects;
 import java.util.UUID;
 
 @Controller
 @RequestMapping("api/v1/secure")
-@AllArgsConstructor
 @CrossOrigin("*")
 public class SecureFileUploadController {
-    FileUploadService service;
+
+    private final FileUploadService service;
+
+    private KeyGenerator keyGenerator = new KeyGenerator();
+
+    @Autowired
+    public SecureFileUploadController(FileUploadService service) {
+        this.service = service;
+    }
 
     @GetMapping("/")
     public String homePage() {
@@ -39,13 +50,19 @@ public class SecureFileUploadController {
     }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FileDetail> uploadFileToS3(@RequestParam("title") String title, @RequestParam("description") String description, @RequestParam("file") MultipartFile multipartFile) throws IOException, CryptoException {
+    public ResponseEntity<FileDetail> uploadFileToS3(@RequestParam("title") String title, @RequestParam("description") String description, @RequestParam("file") MultipartFile multipartFile) throws IOException, CryptoException, GeneralSecurityException {
         File file = convertMultiPartToFile(multipartFile);
         String fileName = file.getName();
+
+        keyGenerator = new KeyGenerator();
+        keyGenerator.generateRandomKeyAES();
+        keyGenerator.generateKeyPair();
+        keyGenerator.encryptAESKey();
+
         File encryptedFile = new File(Constants.FILE_PATH + fileName.substring(0, fileName.lastIndexOf('.')) + ".encrypted");
 
         try {
-            CryptoUtil.encrypt(file, encryptedFile);
+            AESAlgorithm.doEncryption(keyGenerator.getAESKey(), file, encryptedFile);
             FileDetail uploadedFile = service.saveFile(title, description, encryptedFile);
             return new ResponseEntity<>(uploadedFile, HttpStatus.OK);
         } catch (CryptoException ex) {
@@ -59,20 +76,32 @@ public class SecureFileUploadController {
     }
 
     @GetMapping(value = "{id}/download")
-    public ResponseEntity<String> downloadFileFromS3(@PathVariable("id") UUID id) throws CryptoException {
+    public ResponseEntity<String> downloadFileFromS3(@PathVariable("id") UUID id) throws CryptoException, SecureFileNotFoundException {
         File downloadedFile = service.downloadFile(id);
         String fileName = downloadedFile.getName();
         File decryptedFile = new File(Constants.FILE_PATH + fileName.substring(0, fileName.lastIndexOf('.')) + ".decrypted");
 
         try {
-            CryptoUtil.decrypt(downloadedFile, decryptedFile);
+            AESAlgorithm.doDecryption(keyGenerator.getAESKey(), downloadedFile, decryptedFile);
+            keyGenerator.decryptAESKey();
             return new ResponseEntity<>("File Downloaded Successfully in location: " + Constants.FILE_PATH, HttpStatus.OK);
         } catch (CryptoException ex) {
             ex.printStackTrace();
             throw new CryptoException("Error encrypting/decrypting file", ex);
+        } catch (GeneralSecurityException | IOException ex) {
+            throw new CryptoException("Error encrypting/decrypting file", ex);
         } finally {
             downloadedFile.delete();
+            decryptedFile.deleteOnExit(); //remove this line if you want to permanently store downloaded files
         }
+    }
+
+    @GetMapping(value = "{id}/delete")
+    public ResponseEntity<String> deleteFileFromS3(@PathVariable("id") UUID id) throws SecureFileNotFoundException {
+        SecureFileUploadEntity deletedFile = service.deleteFile(id);
+        String fileName = deletedFile.getSecureFileName();
+        String path = deletedFile.getSecureFileS3Path();
+        return new ResponseEntity<>(path + "/" + fileName + " has been deleted sucessfully", HttpStatus.OK);
     }
 
     private static File convertMultiPartToFile(MultipartFile file) throws IOException {
