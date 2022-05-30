@@ -41,7 +41,6 @@ public class SecureFileUploadController {
 
     @PostMapping("/dashboard")
     public String dashboardPage() {
-        //model.addAttribute("username", username);
         return "dashboard";
     }
 
