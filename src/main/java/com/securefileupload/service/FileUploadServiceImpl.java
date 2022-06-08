@@ -31,7 +31,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         metadata.put("Content-Type", Files.probeContentType(file.toPath()));
         metadata.put("Content-Length", String.valueOf(file.length()));
 
-        String path = String.format("%s/%s", BucketName.S3_BUCKET.getBucketName(), UUID.randomUUID());
+        String path = String.format("%s", BucketName.S3_BUCKET.getBucketName());
         String fileName = String.format("%s", file.getName());
         try {
             fileStore.upload(path, fileName, Optional.of(metadata), new FileInputStream(file));
@@ -69,7 +69,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     public SecureFileUploadEntity deleteFile(UUID id) throws SecureFileNotFoundException {
         Optional<SecureFileUploadEntity> secureFileUpload = secureFileUploadRepository.findById(id);
         if (secureFileUpload.isPresent()) {
-            fileStore.delete(BucketName.S3_BUCKET.getBucketName(), secureFileUpload.get().getSecureFileS3Path(), secureFileUpload.get().getSecureFileName());
+            fileStore.delete(BucketName.S3_BUCKET.getBucketName(), secureFileUpload.get().getSecureFileName());
             secureFileUploadRepository.delete(secureFileUpload.get());
             return secureFileUpload.get();
         } else {

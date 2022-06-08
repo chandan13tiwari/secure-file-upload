@@ -52,9 +52,9 @@ public class FileStore {
         }
     }
 
-    public void delete(final String bucketName, final String path, final String key) {
+    public void delete(final String bucketName, final String key) {
         try {
-            final DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, path);
+            final DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, key);
             amazonS3.deleteObject(deleteObjectRequest);
         } catch (AmazonServiceException e) {
             throw new IllegalStateException("Failed to delete the file");

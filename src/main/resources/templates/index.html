@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page in HTML with CSS Code Example</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/styles/css/dashboard.css}">
+
+</head>
+<body>
+<div class="box-form">
+    <div class="left">
+        <div class="overlay">
+            <h1>Secure <br>File <br>Upload.</h1>
+            <br>
+            <br>
+            <p>Hey there! You can now upload and download secure files to Amazon AWS S3 using Secure File Upload.</p>
+        </div>
+    </div>
+
+
+    <div class="right">
+        <div class="inputs">
+            <form id="create_form" th:action="@{/api/v1/secure/dashboard/signup}" method="get">
+                <tr>
+                    <td>
+                        <button type="submit" id="upload_file">Create Account</button>
+                    </td>
+                </tr>
+            </form>
+
+            <br>
+            <br>
+            <br>
+            <br>
+
+            <form id="login_form" th:action="@{/api/v1/secure/user/dashboard}" method="post">
+                <tr>
+                    <td>
+                            <button type="submit" id="file_action">Login</button>
+
+                    </td>
+                </tr>
+            </form>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+</body>
+</html>

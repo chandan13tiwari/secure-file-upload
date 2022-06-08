@@ -25,20 +25,26 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("api/v1/secure")
+@RequestMapping("/api/v1/secure/user")
 @CrossOrigin("*")
 public class SecureFileUploadController {
 
     private final FileUploadService service;
 
-    private KeyGenerator keyGenerator = new KeyGenerator();
+    private final KeyGenerator keyGenerator;
 
     @Autowired
-    public SecureFileUploadController(FileUploadService service) {
+    public SecureFileUploadController(FileUploadService service, KeyGenerator keyGenerator) {
         this.service = service;
+        this.keyGenerator = keyGenerator;
     }
 
-    @GetMapping("/")
+    @PostMapping("/dashboard")
+    public String dashboardPage() {
+        return "dashboard";
+    }
+
+    @GetMapping("/home")
     public String homePage() {
         return "upload";
     }
@@ -54,7 +60,6 @@ public class SecureFileUploadController {
         File file = convertMultiPartToFile(multipartFile);
         String fileName = file.getName();
 
-        keyGenerator = new KeyGenerator();
         keyGenerator.generateRandomKeyAES();
         keyGenerator.generateKeyPair();
         keyGenerator.encryptAESKey();
@@ -70,6 +75,7 @@ public class SecureFileUploadController {
             throw new CryptoException("Error encrypting/decrypting file", ex);
         } finally {
             file.delete();
+            encryptedFile.deleteOnExit();
         }
 
 
@@ -101,7 +107,7 @@ public class SecureFileUploadController {
         SecureFileUploadEntity deletedFile = service.deleteFile(id);
         String fileName = deletedFile.getSecureFileName();
         String path = deletedFile.getSecureFileS3Path();
-        return new ResponseEntity<>(path + "/" + fileName + " has been deleted sucessfully", HttpStatus.OK);
+        return new ResponseEntity<>(path + "/" + fileName + " has been deleted successfully", HttpStatus.OK);
     }
 
     private static File convertMultiPartToFile(MultipartFile file) throws IOException {
